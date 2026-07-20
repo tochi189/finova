@@ -27,7 +27,7 @@ yfinance → ETL(Python) → PostgreSQL → FastAPI → Power BI
 ├── api\                ← FastAPI
 │   ├── __init__.py
 │   └── main.py
-├── docs\               ← ドキュメント（このファイル）
+├── docs\ 
 └── requirements.txt
 ```
 
