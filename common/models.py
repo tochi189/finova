@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date, Float, BigInteger, ForeignKey
+from sqlalchemy import Column, String, Date, Float, BigInteger, ForeignKey, Boolean
 from common.db import Base
 
 
@@ -7,6 +7,7 @@ class Symbol(Base):                                                           #�
     code = Column(String, primary_key=True)
     name = Column(String)
     sector = Column(String)
+    is_active = Column(Boolean, default=True, nullable=False)
 
 
 class DailyPrice(Base):                                                       #モデル設計
