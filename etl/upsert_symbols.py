@@ -1,5 +1,6 @@
 from common.db import Session, engine, Base
 from sqlalchemy import Column, String
+from sqlalchemy.dialects.postgresql import insert             #upsert用インポート
 from pathlib import Path
 import csv
 
@@ -15,16 +16,21 @@ csv_path = Path(__file__).parent.parent / "data" / "symbols.csv"
 symbols = []
 with open(csv_path, encoding="utf-8-sig", newline="") as f:           #symbols.csvの読み込み
     reader = csv.DictReader(f)
-    for row in reader:
-        symbols.append(Symbol(code=row["code"], name=row["name"], sector=row["sector"]))
-
-
-
-
+    rows = list(reader)
+    
+    stmt = insert(Symbol).values(rows)
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["code"],
+        set_= {
+            "name":stmt.excluded.name,
+            "sector":stmt.excluded.sector,
+        } ,
+    )
+         
 
 session = Session()
 try:
-    session.add_all(symbols)
+    session.execute(stmt)
     session.commit()
 except Exception:
     session.rollback()
