@@ -2,7 +2,7 @@ from common.db import Session, engine, Base
 from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert             #upsert用インポート
 from pathlib import Path
-from common.models import Symbol, DailyPrice
+from common.models import Symbol
 from common.log import configure_logging
 import csv
 import logging

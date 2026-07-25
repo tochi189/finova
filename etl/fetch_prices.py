@@ -4,9 +4,14 @@ from common.models import Symbol, DailyPrice
 from common.db import Session
 from pandas import DataFrame
 from common.log import configure_logging
+from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
 import yfinance as yf
 import logging
 
+
+
+#ログ設定
+logger = logging.getLogger("etl.fetch_prices")
 
 #アクティブの銘柄を取得
 def get_target_codes() -> list[str]:
@@ -21,13 +26,23 @@ def get_target_codes() -> list[str]:
         session.close()
 
 
+#データ取得失敗時のリトライ処理
+@retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
+)
+def _fetch_one(code: str) -> DataFrame:
+    """1銘柄分の株価を取得（失敗時は3回リトライ）"""
+    ticker = yf.Ticker(code)
+    return ticker.history(period="7d")
+
 #銘柄の日付ごとのデータを取得
 def ingest(codes: list[str]) -> dict[str, DataFrame]:
     logger.info("株価取得開始：%d銘柄", len(codes))
     result = {}
     for code in codes:
-        ticker = yf.Ticker(code)
-        df = ticker.history(period="7d")
+        df= _fetch_one(code)
         result[code] = df
         logger.info("取得完了：%s(%d行)", code, len(df))
     return result
@@ -76,7 +91,6 @@ def load(rows: list[dict]) -> None:
     
 
 
-logger = logging.getLogger("etl.fetch_prices")
 
 if __name__ == "__main__":
     configure_logging()                              #ログ初期化
