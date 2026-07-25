@@ -12,4 +12,3 @@ if DATABASE_URL is None:                                        #DATABASE_URLの
 engine = create_engine(DATABASE_URL)                            #それぞれの値格納
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
-print("DB接続設定完了")
