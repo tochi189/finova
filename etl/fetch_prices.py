@@ -12,6 +12,9 @@ import logging
 
 #ログ設定
 logger = logging.getLogger("etl.fetch_prices")
+#取得期間の変数
+FETCH_PERIOD = "1y"
+
 
 #アクティブの銘柄を取得
 def get_target_codes() -> list[str]:
@@ -35,7 +38,7 @@ def get_target_codes() -> list[str]:
 def _fetch_one(code: str) -> DataFrame:
     """1銘柄分の株価を取得（失敗時は3回リトライ）"""
     ticker = yf.Ticker(code)
-    return ticker.history(period="7d")
+    return ticker.history(period=FETCH_PERIOD)
 
 #銘柄の日付ごとのデータを取得
 def ingest(codes: list[str]) -> dict[str, DataFrame]:
