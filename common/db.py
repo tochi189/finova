@@ -12,3 +12,10 @@ if DATABASE_URL is None:                                        #DATABASE_URLの
 engine = create_engine(DATABASE_URL)                            #それぞれの値格納
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
+
+def get_db():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()
