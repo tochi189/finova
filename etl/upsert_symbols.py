@@ -1,8 +1,8 @@
 from common.db import Session, engine, Base
-from sqlalchemy import update
+from sqlalchemy import update, delete
 from sqlalchemy.dialects.postgresql import insert             #upsert用インポート
 from pathlib import Path
-from common.models import Symbol
+from common.models import Symbol, DailyPrice
 from common.log import configure_logging
 import csv
 import logging
@@ -32,6 +32,9 @@ def sync_symbols() -> None:
             .values(is_active=False)
         )
 
+        # CSV にない銘柄の株価データを削除
+        delete_stmt = delete(DailyPrice).where(DailyPrice.code.notin_(csv_codes))
+
         #アクティブになっているものをinsert、update
         for row in rows:
             row["is_active"] = True
@@ -49,6 +52,7 @@ def sync_symbols() -> None:
 
     session = Session()
     try:
+        session.execute(delete_stmt)
         session.execute(deactivate_stmt)
         session.execute(stmt)
         session.commit()

@@ -44,7 +44,7 @@ def get_prices(
             logger.warning("存在しない銘柄が指定されました: %s", code)
             raise HTTPException(status_code=404, detail=f"銘柄 {code} は存在しません")
     
-    stmt = select(DailyPrice)
+    stmt = select(DailyPrice).join(Symbol).where(Symbol.is_active == True)
 
     if code is not None:
         stmt = stmt.where(DailyPrice.code == code)

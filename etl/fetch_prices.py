@@ -13,7 +13,7 @@ import logging
 #ログ設定
 logger = logging.getLogger("etl.fetch_prices")
 #取得期間の変数
-FETCH_PERIOD = "1y"
+FETCH_PERIOD = "3y"
 
 
 #アクティブの銘柄を取得
