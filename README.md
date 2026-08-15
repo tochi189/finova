@@ -163,8 +163,6 @@ Power Query のパラメーター（`BaseUrl`）で URL を一元管理してい
 本番環境へ移行する際は**1箇所を書き換えるだけ**で、
 既存のグラフや DAX を作り直す必要がありません。
 
-DAX メジャーの全定義と設計判断は [docs/dax_measures.md](docs/dax_measures.md) にまとめています。
-
 ---
 
 ## セットアップ
@@ -226,8 +224,7 @@ src/
 ├── data/
 │   └── symbols.csv     対象銘柄の定義
 ├── docs/
-│   ├── architecture.md     構成と設計方針
-│   └── dax_measures.md     DAX メジャー定義
+│   └── images/         ダッシュボードのスクリーンショット
 └── power_bi/
     └── finova.pbix     ダッシュボード本体
 ```
@@ -245,8 +242,6 @@ API を起動していない環境ではエラーになります。閲覧のみ�
 ---
 
 ## 実装上の判断
-
-主要な設計判断とその理由は [docs/architecture.md](docs/architecture.md) に記載しています。
 
 - 認証情報は環境変数で管理し、コードには書かない
 - `sys.path.append` を使わず、正式な Python パッケージとして構成する
